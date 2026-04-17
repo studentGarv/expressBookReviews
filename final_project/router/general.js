@@ -117,4 +117,52 @@ public_users.get('/review/:isbn',function (req, res) {
   }
 });
 
+// -------------------------------------------------------------------------
+// TASKS 10-13: AXIOS CLIENT IMPLEMENTATIONS
+// The instructions require demonstrating the use of Axios to fetch data.
+// These functions act as an external client making requests to our REST API.
+// -------------------------------------------------------------------------
+
+// Task 10: Get all books using an async callback function with Axios
+const getAllBooks = async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/');
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Task 11: Search by ISBN using Promises with Axios
+const getBookByISBN = (isbn) => {
+  axios.get(`http://localhost:5000/isbn/${isbn}`)
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
+
+// Task 12: Search by Author using async/await with Axios
+const getBooksByAuthor = async (author) => {
+  try {
+    const response = await axios.get(`http://localhost:5000/author/${author}`);
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Task 13: Search by Title using Promises with Axios
+const getBooksByTitle = (title) => {
+  axios.get(`http://localhost:5000/title/${title}`)
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
+
 module.exports.general = public_users;
