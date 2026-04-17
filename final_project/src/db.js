@@ -5,8 +5,8 @@ const books = {
     isbn: "9780141439570",
     title: "Things Fall Apart",
     author: "Chinua Achebe",
-    reviews: {}
-  },
+    reviews: {"bookworm88": "An absolute masterpiece that changed my perspective.", "lit_fan": "Very tragic but beautifully written."}
+      },
   "9780142410394": {
     isbn: "9780142410394",
     title: "Fairy tales",
@@ -60,6 +60,25 @@ const books = {
     title: "Molloy, Malone Dies, The Unnamable, the trilogy",
     author: "Samuel Beckett",
     reviews: {}
+  },
+  // *** NEW BOOKS ADDED BELOW WITH REVIEWS ***
+  "9780439064873": {
+    isbn: "9780439064873",
+    title: "Harry Potter and the Chamber of Secrets",
+    author: "J.K. Rowling",
+    reviews: {
+      "potterfan99": "A magical continuation of the story!",
+      "magic_reader": "Loved the mystery in this one."
+    }
+  },
+  "9780553103540": {
+    isbn: "9780553103540",
+    title: "A Game of Thrones",
+    author: "George R. R. Martin",
+    reviews: {
+      "fantasy_buff": "Incredible world-building and shocking twists.",
+      "winter_is_here": "I couldn't put it down."
+    }
   }
 };
 
