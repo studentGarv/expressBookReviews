@@ -1,4 +1,16 @@
-# Distribution / packaging
-node_modules
+# Kiro spec files (not needed in repo)
+new/
 
+# Dependencies — never commit these
+node_modules/
+final_project/node_modules/
 
+# Logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
