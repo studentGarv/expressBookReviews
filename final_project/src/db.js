@@ -5,7 +5,7 @@ const books = {
     isbn: "9780141439570",
     title: "Things Fall Apart",
     author: "Chinua Achebe",
-    reviews: {"bookworm88": "An absolute masterpiece that changed my perspective.", "lit_fan": "Very tragic but beautifully written."}
+    reviews: {}
       },
   "9780142410394": {
     isbn: "9780142410394",
