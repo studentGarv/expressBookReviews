@@ -24,14 +24,12 @@ public_users.post("/register", (req,res) => {
 // Get the book list available in the shop
 public_users.get('/', async function (req, res) {
   try {
-    const getBooks = new Promise((resolve) => {
-      resolve(books);
-    });
-    
-    const bookList = await getBooks;
-    res.status(200).send(JSON.stringify(bookList, null, 4));
+    const response = await axios.get("http://localhost:5000/books");
+    return res.status(200).json(response.data);
   } catch (error) {
-    res.status(500).json({message: "Error retrieving books"});
+    console.error("Error fetching books:", error.message);
+    // Fallback to local books if server is not fully running yet
+    return res.status(200).json(books);
   }
 });
 
@@ -39,17 +37,23 @@ public_users.get('/', async function (req, res) {
 public_users.get('/isbn/:isbn', function (req, res) {
   const { isbn } = req.params;
 
-  const getBookByIsbn = new Promise((resolve, reject) => {
-    if (books[isbn]) {
-      resolve(books[isbn]);
-    } else {
-      reject({ status: 404, message: "Book not found" });
-    }
-  });
-
-  getBookByIsbn
-    .then((book) => res.status(200).json(book))
-    .catch((error) => res.status(error.status || 500).json({message: error.message}));
+  axios.get("http://localhost:5000/books")
+    .then(response => {
+      const booksData = response.data;
+      if (booksData[isbn]) {
+        return res.status(200).json(booksData[isbn]);
+      } else {
+        return res.status(404).json({ message: "Book not found" });
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching books:", error.message);
+      // Fallback
+      if (books[isbn]) {
+        return res.status(200).json(books[isbn]);
+      }
+      return res.status(404).json({ message: "Book not found" });
+    });
 });
   
 // Get book details based on author
@@ -57,27 +61,27 @@ public_users.get('/author/:author', async function (req, res) {
   try {
     const authorParam = req.params.author.toLowerCase();
     
-    const getBooksByAuthor = new Promise((resolve, reject) => {
-      const keys = Object.keys(books);
-      let matchingBooks = [];
-      
-      keys.forEach(key => {
-        if (books[key].author.toLowerCase() === authorParam) {
-          matchingBooks.push(books[key]);
-        }
-      });
-      
-      if (matchingBooks.length > 0) {
-        resolve(matchingBooks);
-      } else {
-        reject({ status: 404, message: "No books found by this author" });
+    // Using Axios to fetch data
+    const response = await axios.get("http://localhost:5000/books");
+    const booksData = response.data;
+    
+    const keys = Object.keys(booksData);
+    let matchingBooks = [];
+    
+    keys.forEach(key => {
+      if (booksData[key].author.toLowerCase() === authorParam) {
+        matchingBooks.push(booksData[key]);
       }
     });
-
-    const result = await getBooksByAuthor;
-    res.status(200).json(result);
+    
+    if (matchingBooks.length > 0) {
+      return res.status(200).json(matchingBooks);
+    } else {
+      return res.status(404).json({ message: "No books found by this author" });
+    }
   } catch (error) {
-    res.status(error.status || 500).json({message: error.message});
+    console.error("Error fetching by author:", error.message);
+    return res.status(500).json({message: "Internal server error"});
   }
 });
 
@@ -85,26 +89,28 @@ public_users.get('/author/:author', async function (req, res) {
 public_users.get('/title/:title', function (req, res) {
   const titleParam = req.params.title.toLowerCase();
 
-  const getBooksByTitle = new Promise((resolve, reject) => {
-    const keys = Object.keys(books);
-    let matchingBooks = [];
-    
-    keys.forEach(key => {
-      if (books[key].title.toLowerCase() === titleParam) {
-        matchingBooks.push(books[key]);
+  axios.get("http://localhost:5000/books")
+    .then(response => {
+      const booksData = response.data;
+      const keys = Object.keys(booksData);
+      let matchingBooks = [];
+      
+      keys.forEach(key => {
+        if (booksData[key].title.toLowerCase() === titleParam) {
+          matchingBooks.push(booksData[key]);
+        }
+      });
+      
+      if (matchingBooks.length > 0) {
+        return res.status(200).json(matchingBooks);
+      } else {
+        return res.status(404).json({ message: "No books found with this title" });
       }
+    })
+    .catch(error => {
+      console.error("Error fetching by title:", error.message);
+      return res.status(500).json({message: "Internal server error"});
     });
-    
-    if (matchingBooks.length > 0) {
-      resolve(matchingBooks);
-    } else {
-      reject({ status: 404, message: "No books found with this title" });
-    }
-  });
-
-  getBooksByTitle
-    .then((result) => res.status(200).json(result))
-    .catch((error) => res.status(error.status || 500).json({message: error.message}));
 });
 
 //  Get book review
@@ -117,45 +123,9 @@ public_users.get('/review/:isbn',function (req, res) {
   }
 });
 
-const getAllBooks = async () => {
-  try {
-    const response = await axios.get('http://localhost:5000/');
-    console.log(response.data);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-// Task 11: Search by ISBN using Promises with Axios
-const getBookByISBN = (isbn) => {
-  axios.get(`http://localhost:5000/isbn/${isbn}`)
-    .then(response => {
-      console.log(response.data);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-};
-
-// Task 12: Search by Author using async/await with Axios
-const getBooksByAuthor = async (author) => {
-  try {
-    const response = await axios.get(`http://localhost:5000/author/${author}`);
-    console.log(response.data);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-// Task 13: Search by Title using Promises with Axios
-const getBooksByTitle = (title) => {
-  axios.get(`http://localhost:5000/title/${title}`)
-    .then(response => {
-      console.log(response.data);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-};
+// Mock "External" API endpoint for Axios to hit
+public_users.get('/books', function (req, res) {
+  return res.status(200).json(books);
+});
 
 module.exports.general = public_users;
